@@ -103,7 +103,7 @@ void CGameDlg::InitElement() {
 	m_dcElement.CreateCompatibleDC(&dc); // 创建与视频内存兼容的内存 DC 
 	m_dcElement.SelectObject(hBmp);// 将位图资源选入 DC 
 	
-	HANDLE hMask = ::LoadImageW(NULL, _T("theme\\picture\\fruit_mask.bmp"), IMAGE_BITMAP,0,0,LR_LOADFROMFILE);// 加载掩码 BMP 图片资源 
+	HANDLE hMask = ::LoadImageW(NULL, _T("theme\\picture\\animal_mask.bmp"), IMAGE_BITMAP,0,0,LR_LOADFROMFILE);// 加载掩码 BMP 图片资源 
 	m_dcMask.CreateCompatibleDC(&dc); // 创建与视频内存兼容的内存 DC 
 	m_dcMask.SelectObject(hMask);// 将位图资源选入 DC 
 }
@@ -112,15 +112,24 @@ void CGameDlg::UpdateMap() {
 	for (int i = 0; i <ROW_NUM; i++) {
 		for (int j = 0; j<COL_NUM; j++) { 			
 			int nElemVal=m_GameC.GetElement(i,j);// 得到图片编号的值 
-			m_dcMem.BitBlt(LEFT +j*ELEMW, TOP +i*ELEMH, ELEMW, ELEMH, 
+			m_dcMem.BitBlt(GAME_LEFT +j*ELEMW, GAME_TOP +i*ELEMH, ELEMW, ELEMH,
 				&m_dcMask,0,nElemVal*ELEMH,SRCPAINT); // 将背景与掩码相或，边保留，图像区域为 1 	
 
-			m_dcMem.BitBlt(LEFT +j*ELEMW, TOP +i*ELEMH, ELEMW, ELEMH, 
+			m_dcMem.BitBlt(GAME_LEFT +j*ELEMW, GAME_TOP +i*ELEMH, ELEMW, ELEMH,
 				&m_dcElement,0,nElemVal*ELEMH,SRCAND);// 与元素图片相与，边保留，图像区域为元素图片 
 		}
 	}
 	
-	//UpdateWindow();
+	Invalidate();
+}
+
+void CGameDlg::DrawTipFrame(int nRow, int nCol) {
+	CDC *pdc = GetDC();
+	CBrush brush(RGB(233, 43, 43));
+	RECT rect = { GAME_LEFT + (nRow - 1)*ELEMW,GAME_TOP + (nCol - 1)*ELEMH,GAME_LEFT + nRow *ELEMW,GAME_TOP + nCol *ELEMH };
+	pdc->SelectObject(&brush);
+	pdc->FrameRect(&rect, &brush);
+	ReleaseDC(pdc);
 }
 
 void CGameDlg::DrawTipLine(Vertex asvPath[4], int nVexnum) {
@@ -137,40 +146,43 @@ void CGameDlg::DrawTipLine(Vertex asvPath[4], int nVexnum) {
 
 
 
-//void CGameDlg::OnLButtonUp(UINT nFlags, CPoint point){
-//	int nRow, nCol;
-//	// 判断鼠标点击的区域 
-//	if(point.y<m_rtGameRect.top|| point.y>m_rtGameRect.bottom || point.x<m_rtGameRect.left|| point.x>m_rtGameRect.right) { 
-//		return CDialogEx::OnLButtonUp(nFlags,point); 
-//	}
-//
-//	//…… 
-//	if(m_bFirstPoint){ // 第一个点  //……
-//		CPoint point;
-//		nRow = (point.y - 50) / 40;
-//		nCol = (point.x - 50) / 40;
-//		DrawTipFrame(nRow,  nCol);
-//	} 
-//	else  {// 第二个点 …… 
-//		   // 连子判断 
-//		bool bSuc=m_GameC.Link(avPath,nVexnum); 
-//		if(bSuc==true) { // 画提示线 
-//			DrawTipLine(avPath,nVexnum); // 更新地图 
-//			UpdateMap(); 
-//		} //…… 
-//		// 判断胜负 
-//		if(bSuc&&m_GameC.IsWin()) { //……
-//	
-//		} 
-//	}
-//	m_bFirstPoint = !m_bFirstPoint;
-//
-//}
-//
-//
+void CGameDlg::OnLButtonUp(UINT nFlags, CPoint point){
+	int nRow, nCol;
+	// 判断鼠标点击的区域 
+	if(point.y<m_rtGameRect.top|| point.y>m_rtGameRect.bottom || point.x<m_rtGameRect.left|| point.x>m_rtGameRect.right) { 
+		return CDialogEx::OnLButtonUp(nFlags,point); 
+	}
+
+	if(m_bFirstPoint){ // 第一个点  
+		CPoint point;
+		nRow = (point.y - GAME_TOP) / ELEMH;
+		nCol = (point.x - GAME_LEFT) / ELEMW;
+		DrawTipFrame(nRow,  nCol);
+	} 
+	else  {// 第二个点
+		CPoint point;
+		nRow = (point.y - GAME_TOP) / ELEMH;
+		nCol = (point.x - GAME_LEFT) / ELEMW;
+		DrawTipFrame(nRow, nCol);
+
+		bool bSuc=m_GameC.Link(avPath,nVexnum); 		   // 连子判断 
+		if(bSuc==true) { // 画提示线 
+			DrawTipLine(avPath,nVexnum); // 更新地图 
+			UpdateMap(); 
+		} 
+		// 判断胜负 
+		if(bSuc&&m_GameC.IsWin()) { //……
+	
+		} 
+	}
+	m_bFirstPoint = !m_bFirstPoint;
+
+}
+
+
 void CGameDlg::OnClickedGameStart(){
 	//m_bPlaying = true;
 	m_GameC.StartGame();
 	UpdateMap();
-	Invalidate();
+
 }

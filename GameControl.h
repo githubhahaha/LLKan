@@ -2,13 +2,15 @@
 #include "global.h"
 #include "GameLogic.h"
 class CGameControl{
-public:
+protected:
 	Vertex m_svSelFst;// 选中的第一个点
 	Vertex m_svSelSec;// 选中的第二个点
+	int** m_pGameMap;// 游戏地图数组指针 
+
+public:
 	static int s_nRows;//游戏行数
 	static int s_nCols;// 游戏列数
 	static int s_nPicNum;// 图片数
-	int** m_pGameMap;// 游戏地图数组指针 
 	CGameLogic m_GameLogic;// 游戏逻辑操作对象
 	void StartGame(void);// 开始游戏 
 	int GetElement(int nRow, int nCol);// 得到某一个元素

@@ -1,11 +1,11 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (LLKan.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  stdafx.cpp
-  LLKanDlg.cpp
-  LLKan.cpp
   GameLogic.cpp
-  GameException.cpp
   GameDlg.cpp
-  GameControl.cpp
+d:\vs_workspace\llkan\llkan\gamedlg.cpp(164): error C2065: “avPath”: 未声明的标识符
+d:\vs_workspace\llkan\llkan\gamedlg.cpp(164): error C2065: “nVexnum”: 未声明的标识符
+d:\vs_workspace\llkan\llkan\gamedlg.cpp(166): error C2065: “avPath”: 未声明的标识符
+d:\vs_workspace\llkan\llkan\gamedlg.cpp(166): error C2065: “nVexnum”: 未声明的标识符
   正在生成代码...
-  LLKan.vcxproj -> D:\VS_workSpace\LLKan\Debug\LLK.exe
-  LLKan.vcxproj -> D:\VS_workSpace\LLKan\Debug\LLK.pdb (Partial PDB)
+  正在跳过...(未检测到相关更改)
+  LLKanDlg.cpp
+  GameControl.cpp
